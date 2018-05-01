@@ -5,10 +5,21 @@
  */
 package com.rosinante.tugasdaripakfaqih;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -20,22 +31,19 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
     /**
      * Creates new form TabelPengeluaranFrame
      */
+    private static final String DATABASE_URL = "https://touri-dinacom.firebaseio.com/";
+
+    private static DatabaseReference database;
+    private final List<TabelModel> tabelModels = new ArrayList<>();
+    String[] tableRow = new String[3];
+
     public TabelPengeluaranFrame() {
         initComponents();
-        String[] tableRow = new String[3];
-        TabelModel tabelData = new TabelModel();
-        SimpleDateFormat sdfDate = new SimpleDateFormat("dd/MM/yyyy");//dd/MM/yyyy
-        Date now = new Date();
-        String strDate = sdfDate.format(now);
-        System.out.println(strDate);
-        tableRow[0] = strDate;
-        tableRow[1] = tabelData.getDataPengeluaran();
-        tableRow[2] = "0";
-        DefaultTableModel row = (DefaultTableModel) data_pengeluaran_table.getModel();
-        row.addColumn("Tanggal");
-        row.addColumn("Pengeluaran");
-        row.addColumn("Pemasukan");
-        row.addRow(tableRow);
+        kategori_combo_box.addItem("pemasukan");
+        kategori_combo_box.addItem("pengeluaran");
+        String selectedCategory = String.valueOf(kategori_combo_box.getSelectedItem());
+        System.out.println(selectedCategory);
+        getDataFromFirebase(selectedCategory);
     }
 
     /**
@@ -54,20 +62,14 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
         labelSaldo1 = new javax.swing.JLabel();
         labelSaldo2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        kategori_combo_box = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setText("Tabel Data");
 
-        data_pengeluaran_table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
+        data_pengeluaran_table.setToolTipText("");
         jScrollPane2.setViewportView(data_pengeluaran_table);
 
         labelSaldo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -91,34 +93,37 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelSaldo1)
-                            .addComponent(labelSaldo2)
-                            .addComponent(labelSaldo)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(148, 148, 148)
-                        .addComponent(jLabel1)))
+                    .addComponent(labelSaldo1)
+                    .addComponent(labelSaldo2)
+                    .addComponent(labelSaldo)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addGap(0, 23, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(139, 139, 139)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(kategori_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addGap(24, 24, 24)
                 .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addComponent(kategori_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
+                .addGap(18, 18, 18)
                 .addComponent(labelSaldo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelSaldo1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelSaldo2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addContainerGap())
         );
@@ -131,6 +136,38 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
         inputDataFrame.show();
         setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
+    private void getDataFromFirebase(String selectedCategory) {
+        database = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + selectedCategory);
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                for (DataSnapshot dataSnapshot : ds.getChildren()) {
+                    TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
+                    tabelModels.add(tabelModel);
+                }
+                for (int position = 0; position < tabelModels.size(); position++) {
+                    SimpleDateFormat sdfDate = new SimpleDateFormat("dd/MM/yyyy");//dd/MM/yyyy
+                    Date now = new Date();
+                    String strDate = sdfDate.format(now);
+                    System.out.println(strDate);
+                    System.out.println(tabelModels.get(position).getDataPengeluaran());
+                    tableRow[0] = strDate;
+                    tableRow[1] = "";
+                    tableRow[2] = tabelModels.get(position).getDataPengeluaran();
+                    DefaultTableModel row = (DefaultTableModel) data_pengeluaran_table.getModel();
+                    row.addColumn("Tanggal");
+                    row.addColumn("Pengeluaran");
+                    row.addColumn("Pemasukan");
+                    row.addRow(tableRow);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError de) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+    }
 
     /**
      * @param args the command line arguments
@@ -163,14 +200,30 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             new TabelPengeluaranFrame().setVisible(true);
         });
+        // Initialize Firebase
+        try {
+            // [START initialize]
+            FileInputStream serviceAccount = new FileInputStream("touri-dinacom-firebase-adminsdk-aozcy-920c20d745.json");
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setDatabaseUrl(DATABASE_URL)
+                    .build();
+            FirebaseApp.initializeApp(options);
+            // [END initialize]
+        } catch (IOException e) {
+            System.out.println("ERROR: invalid service account credentials. See README.");
+            System.out.println(e.getMessage());
+
+            System.exit(1);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonProses;
     private javax.swing.JTable data_pengeluaran_table;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JComboBox<String> kategori_combo_box;
     private javax.swing.JLabel labelSaldo;
     private javax.swing.JLabel labelSaldo1;
     private javax.swing.JLabel labelSaldo2;
