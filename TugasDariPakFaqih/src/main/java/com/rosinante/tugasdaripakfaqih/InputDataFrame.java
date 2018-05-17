@@ -12,6 +12,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -41,6 +43,7 @@ public class InputDataFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         radio_button_pemasukan = new javax.swing.JRadioButton();
         radio_button_pengeluaran = new javax.swing.JRadioButton();
         jenis_data_label1 = new javax.swing.JLabel();
@@ -52,6 +55,7 @@ public class InputDataFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        buttonGroup1.add(radio_button_pemasukan);
         radio_button_pemasukan.setSelected(true);
         radio_button_pemasukan.setText("Pemasukan");
         radio_button_pemasukan.addActionListener(new java.awt.event.ActionListener() {
@@ -60,6 +64,7 @@ public class InputDataFrame extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(radio_button_pengeluaran);
         radio_button_pengeluaran.setText("Pengeluaran");
         radio_button_pengeluaran.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -159,13 +164,18 @@ public class InputDataFrame extends javax.swing.JFrame {
         } else if (String.valueOf(jumlah).isEmpty()) {
             JOptionPane.showMessageDialog(this, "Jumlah Belum Diisi!");
         } else {
+            SimpleDateFormat sdfDate = new SimpleDateFormat("dd/MM/yyyy");//dd/MM/yyyy
+            Date now = new Date();
+            String strDate = sdfDate.format(now);
+            System.out.println(strDate);
             database = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + kategori);
             String uploadId = database.push().getKey();
-            TabelModel tabelModel = new TabelModel(String.valueOf(jumlah), kategori);
+            TabelModel tabelModel = new TabelModel(String.valueOf(jumlah), kategori, strDate, uploadId);
             database.child(uploadId).setValue(tabelModel);
-            JOptionPane.showMessageDialog(this, tabelModel.getDataPengeluaran() + " " + tabelModel.getKategori());
-//            TabelPengeluaranFrame tabelDataPengeluaranFrame = new TabelPengeluaranFrame();
-//            tabelDataPengeluaranFrame.show();
+            JOptionPane.showMessageDialog(this, tabelModel.getData_pengeluaran() + " " + tabelModel.getKategori());
+            TabelPengeluaranFrame tabelDataPengeluaranFrame = new TabelPengeluaranFrame();
+            tabelDataPengeluaranFrame.show();
+            setVisible(false);
         }
     }//GEN-LAST:event_button_input_data2ActionPerformed
 
@@ -216,8 +226,7 @@ public class InputDataFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton button_input_data;
-    private javax.swing.JButton button_input_data1;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton button_input_data2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JSeparator jSeparator1;

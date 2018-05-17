@@ -160,7 +160,7 @@ public class LoginFrame extends javax.swing.JFrame {
     private void simpanData(String saldo, String password) {
         try {
             FileOutputStream output = new FileOutputStream("datalogin.ini");
-            new PrintStream(output).print("email=" + saldo);
+            new PrintStream(output).print("email=" + saldo + "\n");
             new PrintStream(output).print("password=" + password);
             try {
                 output.close();

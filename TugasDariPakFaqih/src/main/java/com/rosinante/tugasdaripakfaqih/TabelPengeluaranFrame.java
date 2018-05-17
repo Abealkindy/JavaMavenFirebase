@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -35,15 +36,15 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
 
     private static DatabaseReference database;
     private final List<TabelModel> tabelModels = new ArrayList<>();
-    String[] tableRow = new String[3];
+    private final String[] tableRow;
 
     public TabelPengeluaranFrame() {
+        this.tableRow = new String[2];
+//        String selectedCategory = String.valueOf(kategori_combo_box.getSelectedItem());
+//        this.database = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + selectedCategory);
         initComponents();
         kategori_combo_box.addItem("pemasukan");
         kategori_combo_box.addItem("pengeluaran");
-        String selectedCategory = String.valueOf(kategori_combo_box.getSelectedItem());
-        System.out.println(selectedCategory);
-        getDataFromFirebase(selectedCategory);
     }
 
     /**
@@ -63,6 +64,10 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
         labelSaldo2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         kategori_combo_box = new javax.swing.JComboBox<>();
+        jenis_data_label1 = new javax.swing.JLabel();
+        text_field_edit_data = new javax.swing.JTextField();
+        button_edit_data = new javax.swing.JButton();
+        button_delete_data = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -70,6 +75,11 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
         jLabel1.setText("Tabel Data");
 
         data_pengeluaran_table.setToolTipText("");
+        data_pengeluaran_table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                data_pengeluaran_tableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(data_pengeluaran_table);
 
         labelSaldo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -88,36 +98,87 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
             }
         });
 
+        kategori_combo_box.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                kategori_combo_boxActionPerformed(evt);
+            }
+        });
+
+        jenis_data_label1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jenis_data_label1.setText("Edit Data");
+
+        button_edit_data.setText("Edit Data");
+        button_edit_data.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_edit_dataActionPerformed(evt);
+            }
+        });
+
+        button_delete_data.setText("Delete Data");
+        button_delete_data.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_delete_dataActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labelSaldo1)
-                    .addComponent(labelSaldo2)
-                    .addComponent(labelSaldo)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addGap(0, 23, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(139, 139, 139)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelSaldo1)
+                            .addComponent(labelSaldo2)
+                            .addComponent(labelSaldo)
+                            .addComponent(jButton1)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(251, 251, 251)
+                        .addComponent(jLabel1)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(kategori_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addComponent(text_field_edit_data, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(button_edit_data)
+                        .addGap(18, 18, 18)
+                        .addComponent(button_delete_data))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(79, 79, 79)
+                        .addComponent(jenis_data_label1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(kategori_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(227, 227, 227))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addGap(23, 23, 23)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addGap(29, 29, 29)
                 .addComponent(kategori_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jenis_data_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(51, 51, 51)
+                        .addComponent(text_field_edit_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(48, 48, 48)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(button_edit_data)
+                            .addComponent(button_delete_data)))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(13, 13, 13)
                 .addComponent(labelSaldo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelSaldo1)
@@ -136,30 +197,166 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
         inputDataFrame.show();
         setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void kategori_combo_boxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kategori_combo_boxActionPerformed
+        String selectedCategori = String.valueOf(kategori_combo_box.getSelectedItem());
+        System.out.println(selectedCategori);
+        getDataFromFirebase(selectedCategori);
+        tabelModels.clear();
+    }//GEN-LAST:event_kategori_combo_boxActionPerformed
+
+    private void data_pengeluaran_tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_data_pengeluaran_tableMouseClicked
+        int selectedRow = data_pengeluaran_table.getSelectedRow();
+        DefaultTableModel tablerow = (DefaultTableModel) data_pengeluaran_table.getModel();
+        text_field_edit_data.setText(tablerow.getValueAt(selectedRow, 1).toString());
+    }//GEN-LAST:event_data_pengeluaran_tableMouseClicked
+
+    private void button_edit_dataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_edit_dataActionPerformed
+        int jumlahs = Integer.parseInt(text_field_edit_data.getText());
+        String selectedCategory = String.valueOf(kategori_combo_box.getSelectedItem());
+        int selectedRow = data_pengeluaran_table.getSelectedRow();
+        if (String.valueOf(jumlahs).isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Jumlah Belum Diisi!");
+        } else {
+            DatabaseReference databases = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + selectedCategory);
+            databases.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot ds) {
+                    DefaultTableModel row = (DefaultTableModel) data_pengeluaran_table.getModel();
+                    row.setColumnCount(0);
+                    row.setRowCount(0);
+                    row.addColumn("Tanggal");
+                    if (selectedCategory.equals("pemasukan")) {
+                        row.addColumn("Pemasukan");
+                    } else {
+                        row.addColumn("Pengeluaran");
+                    }
+                    databases.child(tabelModels.get(selectedRow).getUid()).child("data_pengeluaran").setValue(String.valueOf(jumlahs));
+                    if (!tabelModels.isEmpty()) {
+                        tabelModels.clear();
+                        for (DataSnapshot dataSnapshot : ds.getChildren()) {
+                            TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
+                            tabelModels.add(tabelModel);
+                        }
+                        for (int position = 0; position < tabelModels.size(); position++) {
+                            row.fireTableDataChanged();
+                            System.out.println(tabelModels.get(position).getData_pengeluaran());
+                            tableRow[0] = tabelModels.get(position).getPengeluaran_date();
+                            tableRow[1] = tabelModels.get(position).getData_pengeluaran();
+                            row.addRow(tableRow);
+                        }
+                    } else {
+                        getDataFromFirebase(selectedCategory);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError de) {
+                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                }
+            });
+        }
+    }//GEN-LAST:event_button_edit_dataActionPerformed
+
+    private void button_delete_dataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_delete_dataActionPerformed
+        int jumlahs = Integer.parseInt(text_field_edit_data.getText());
+        String selectedCategory = String.valueOf(kategori_combo_box.getSelectedItem());
+        int selectedRow = data_pengeluaran_table.getSelectedRow();
+        if (String.valueOf(jumlahs).isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Jumlah Belum Diisi!");
+        } else {
+            DatabaseReference databasez = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + selectedCategory);
+            databasez.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot ds) {
+                    DefaultTableModel row = (DefaultTableModel) data_pengeluaran_table.getModel();
+                    row.setColumnCount(0);
+                    row.setRowCount(0);
+                    row.addColumn("Tanggal");
+                    if (selectedCategory.equals("pemasukan")) {
+                        row.addColumn("Pemasukan");
+                    } else {
+                        row.addColumn("Pengeluaran");
+                    }
+                    databasez.child(tabelModels.get(selectedRow).getUid() + "/").removeValue();
+                    if (!tabelModels.isEmpty()) {
+                        tabelModels.clear();
+                        for (DataSnapshot dataSnapshot : ds.getChildren()) {
+                            TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
+                            tabelModels.add(tabelModel);
+                        }
+                        for (int position = 0; position < tabelModels.size(); position++) {
+                            row.fireTableDataChanged();
+                            System.out.println(tabelModels.get(position).getData_pengeluaran());
+                            tableRow[0] = tabelModels.get(position).getPengeluaran_date();
+                            tableRow[1] = tabelModels.get(position).getData_pengeluaran();
+                            row.addRow(tableRow);
+                        }
+                    } else {
+                        for (DataSnapshot dataSnapshot : ds.getChildren()) {
+                            TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
+                            tabelModels.add(tabelModel);
+                        }
+                        for (int position = 0; position < tabelModels.size(); position++) {
+                            row.fireTableDataChanged();
+                            System.out.println(tabelModels.get(position).getData_pengeluaran());
+                            tableRow[0] = tabelModels.get(position).getPengeluaran_date();
+                            tableRow[1] = tabelModels.get(position).getData_pengeluaran();
+                            row.addRow(tableRow);
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError de) {
+                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                }
+            });
+        }
+    }//GEN-LAST:event_button_delete_dataActionPerformed
     private void getDataFromFirebase(String selectedCategory) {
-        database = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + selectedCategory);
-        database.addValueEventListener(new ValueEventListener() {
+        DatabaseReference databasesz = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + selectedCategory);
+        databasesz.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
-                for (DataSnapshot dataSnapshot : ds.getChildren()) {
-                    TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
-                    tabelModels.add(tabelModel);
-                }
-                for (int position = 0; position < tabelModels.size(); position++) {
-                    SimpleDateFormat sdfDate = new SimpleDateFormat("dd/MM/yyyy");//dd/MM/yyyy
-                    Date now = new Date();
-                    String strDate = sdfDate.format(now);
-                    System.out.println(strDate);
-                    System.out.println(tabelModels.get(position).getDataPengeluaran());
-                    tableRow[0] = strDate;
-                    tableRow[1] = "";
-                    tableRow[2] = tabelModels.get(position).getDataPengeluaran();
-                    DefaultTableModel row = (DefaultTableModel) data_pengeluaran_table.getModel();
-                    row.addColumn("Tanggal");
-                    row.addColumn("Pengeluaran");
+                DefaultTableModel row = (DefaultTableModel) data_pengeluaran_table.getModel();
+                row.setColumnCount(0);
+                row.setRowCount(0);
+                row.addColumn("Tanggal");
+                if (selectedCategory.equals("pemasukan")) {
                     row.addColumn("Pemasukan");
-                    row.addRow(tableRow);
+                } else {
+                    row.addColumn("Pengeluaran");
                 }
+                if (!tabelModels.isEmpty()) {
+                    tabelModels.clear();
+                    for (DataSnapshot dataSnapshot : ds.getChildren()) {
+                        TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
+                        tabelModels.add(tabelModel);
+                    }
+                    for (int position = 0; position < tabelModels.size(); position++) {
+                        row.fireTableDataChanged();
+                        System.out.println(tabelModels.get(position).getData_pengeluaran());
+                        tableRow[0] = tabelModels.get(position).getPengeluaran_date();
+                        tableRow[1] = tabelModels.get(position).getData_pengeluaran();
+                        row.addRow(tableRow);
+                    }
+                } else {
+                    for (DataSnapshot dataSnapshot : ds.getChildren()) {
+                        TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
+                        tabelModels.add(tabelModel);
+                    }
+                    for (int position = 0; position < tabelModels.size(); position++) {
+                        row.fireTableDataChanged();
+                        System.out.println(tabelModels.get(position).getData_pengeluaran());
+                        tableRow[0] = tabelModels.get(position).getPengeluaran_date();
+                        tableRow[1] = tabelModels.get(position).getData_pengeluaran();
+                        row.addRow(tableRow);
+                    }
+                }
+
             }
 
             @Override
@@ -209,6 +406,7 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
                     .setDatabaseUrl(DATABASE_URL)
                     .build();
             FirebaseApp.initializeApp(options);
+            database = FirebaseDatabase.getInstance().getReference(DATABASE_URL);
             // [END initialize]
         } catch (IOException e) {
             System.out.println("ERROR: invalid service account credentials. See README.");
@@ -219,13 +417,17 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton button_delete_data;
+    private javax.swing.JButton button_edit_data;
     private javax.swing.JTable data_pengeluaran_table;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel jenis_data_label1;
     private javax.swing.JComboBox<String> kategori_combo_box;
     private javax.swing.JLabel labelSaldo;
     private javax.swing.JLabel labelSaldo1;
     private javax.swing.JLabel labelSaldo2;
+    private javax.swing.JTextField text_field_edit_data;
     // End of variables declaration//GEN-END:variables
 }

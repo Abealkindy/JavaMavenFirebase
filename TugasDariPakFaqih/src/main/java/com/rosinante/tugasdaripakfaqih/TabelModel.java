@@ -14,15 +14,20 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class TabelModel {
 
-    private String dataPengeluaran;
+    private String data_pengeluaran;
     private String kategori;
+    private String pengeluaran_date;
+    private String uid;
 
-    public String getDataPengeluaran() {
-        return dataPengeluaran;
+    public TabelModel() {
     }
 
-    public void setDataPengeluaran(String dataPengeluaran) {
-        this.dataPengeluaran = dataPengeluaran;
+    public String getData_pengeluaran() {
+        return data_pengeluaran;
+    }
+
+    public void setData_pengeluaran(String data_pengeluaran) {
+        this.data_pengeluaran = data_pengeluaran;
     }
 
     public String getKategori() {
@@ -33,12 +38,27 @@ public class TabelModel {
         this.kategori = kategori;
     }
 
-    public TabelModel(String dataPengeluaran, String kategori) {
-        this.dataPengeluaran = dataPengeluaran;
-        this.kategori = kategori;
+    public String getPengeluaran_date() {
+        return pengeluaran_date;
     }
 
-    public TabelModel() {
+    public void setPengeluaran_date(String pengeluaran_date) {
+        this.pengeluaran_date = pengeluaran_date;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public TabelModel(String data_pengeluaran, String kategori, String pengeluaran_date, String uid) {
+        this.data_pengeluaran = data_pengeluaran;
+        this.kategori = kategori;
+        this.pengeluaran_date = pengeluaran_date;
+        this.uid = uid;
     }
 
 }
