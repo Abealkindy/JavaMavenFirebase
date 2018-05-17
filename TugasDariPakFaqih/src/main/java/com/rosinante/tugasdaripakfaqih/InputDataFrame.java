@@ -10,14 +10,14 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import java.io.FileInputStream;
-import java.io.IOException;
+
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import javax.swing.JOptionPane;
 
 /**
- *
  * @author KOCHOR
  */
 public class InputDataFrame extends javax.swing.JFrame {
@@ -27,7 +27,7 @@ public class InputDataFrame extends javax.swing.JFrame {
      */
     String kategori;
     private static final String DATABASE_URL = "https://touri-dinacom.firebaseio.com/";
-
+    private double jumlahpemasukan, jumlahpengeluaran, jumlahtotal = 0;
     private static DatabaseReference database;
 
     public InputDataFrame() {
@@ -91,58 +91,58 @@ public class InputDataFrame extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(114, 114, 114)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addGap(114, 114, 114)
+                                                                .addComponent(jLabel1))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addContainerGap()
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jenis_data_label)
+                                                                        .addGroup(layout.createSequentialGroup()
+                                                                                .addComponent(radio_button_pemasukan)
+                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                .addComponent(radio_button_pengeluaran)))))
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jenis_data_label1)
+                                                                        .addComponent(text_field_input_data, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                .addContainerGap())
+                        .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jenis_data_label)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(radio_button_pemasukan)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(radio_button_pengeluaran)))))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jenis_data_label1)
-                                    .addComponent(text_field_input_data, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(button_input_data2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(button_input_data2)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jenis_data_label)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(radio_button_pemasukan)
-                    .addComponent(radio_button_pengeluaran))
-                .addGap(18, 18, 18)
-                .addComponent(jenis_data_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(text_field_input_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
-                .addComponent(button_input_data2)
-                .addContainerGap(76, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jenis_data_label)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(radio_button_pemasukan)
+                                        .addComponent(radio_button_pengeluaran))
+                                .addGap(18, 18, 18)
+                                .addComponent(jenis_data_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(text_field_input_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(32, 32, 32)
+                                .addComponent(button_input_data2)
+                                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         pack();
@@ -158,7 +158,7 @@ public class InputDataFrame extends javax.swing.JFrame {
 
     private void button_input_data2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_input_data2ActionPerformed
 
-        int jumlah = Integer.parseInt(text_field_input_data.getText());
+        double jumlah = Double.parseDouble(text_field_input_data.getText());
         if (kategori.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Kategori Belum Dipilih!");
         } else if (String.valueOf(jumlah).isEmpty()) {
@@ -171,6 +171,7 @@ public class InputDataFrame extends javax.swing.JFrame {
             database = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + kategori);
             String uploadId = database.push().getKey();
             TabelModel tabelModel = new TabelModel(String.valueOf(jumlah), kategori, strDate, uploadId);
+            simpanData(kategori, jumlah);
             database.child(uploadId).setValue(tabelModel);
             JOptionPane.showMessageDialog(this, tabelModel.getData_pengeluaran() + " " + tabelModel.getKategori());
             TabelPengeluaranFrame tabelDataPengeluaranFrame = new TabelPengeluaranFrame();
@@ -178,6 +179,103 @@ public class InputDataFrame extends javax.swing.JFrame {
             setVisible(false);
         }
     }//GEN-LAST:event_button_input_data2ActionPerformed
+
+    private void simpanData(String kategori, double jumlah) {
+        jumlahpengeluaran = Double.parseDouble(getJumlahPengeluaran());
+        jumlahpemasukan = Double.parseDouble(getJumlahPemasukan());
+        jumlahtotal = Double.parseDouble(getJumlahTotal());
+        if (kategori.equals("pemasukan")) {
+            double hasiljumlahpemasukan = jumlahpemasukan + jumlah;
+            double hasiltotal = jumlahtotal + jumlah;
+            simpanDataPemasukan(hasiljumlahpemasukan);
+            simpanDataTotal(hasiltotal);
+        } else if (kategori.equals("pengeluaran")) {
+            double hasiljumlahpengeluaran = jumlahpengeluaran + jumlah;
+            double hasiltotal = jumlahtotal - jumlah;
+            simpanDataPengeluaran(hasiljumlahpengeluaran);
+            simpanDataTotal(hasiltotal);
+        }
+    }
+
+    private void simpanDataPengeluaran(double jumlah) {
+        try {
+            FileOutputStream outputStream = new FileOutputStream("datapengeluaran.ini");
+            new PrintStream(outputStream).print("pengeluaran = " + jumlah);
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void simpanDataPemasukan(double jumlah) {
+        try {
+            FileOutputStream outputStream = new FileOutputStream("datapemasukan.ini");
+            new PrintStream(outputStream).print("pemasukan = " + jumlah);
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void simpanDataTotal(double jumlah) {
+        try {
+            FileOutputStream outputStream = new FileOutputStream("datatotal.ini");
+            new PrintStream(outputStream).print("jumlahtotal = " + jumlah);
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private String getJumlahPengeluaran() {
+        String value = null;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream("datapengeluaran.ini"));
+            value = properties.getProperty("pengeluaran");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    private String getJumlahPemasukan() {
+        String value = null;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream("datapemasukan.ini"));
+            value = properties.getProperty("pemasukan");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    private String getJumlahTotal() {
+        String value = null;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream("datatotal.ini"));
+            value = properties.getProperty("jumlahtotal");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
 
     /**
      * @param args the command line arguments

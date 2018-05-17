@@ -13,18 +13,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.swing.JComboBox;
+import java.util.Properties;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
  * @author KOCHOR
  */
 public class TabelPengeluaranFrame extends javax.swing.JFrame {
@@ -34,17 +33,53 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
      */
     private static final String DATABASE_URL = "https://touri-dinacom.firebaseio.com/";
 
-    private static DatabaseReference database;
     private final List<TabelModel> tabelModels = new ArrayList<>();
     private final String[] tableRow;
 
     public TabelPengeluaranFrame() {
         this.tableRow = new String[2];
-//        String selectedCategory = String.valueOf(kategori_combo_box.getSelectedItem());
-//        this.database = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + selectedCategory);
         initComponents();
         kategori_combo_box.addItem("pemasukan");
         kategori_combo_box.addItem("pengeluaran");
+        labelSaldo.setText("Total Jumlah Pengeluaran : Rp. " + getJumlahPengeluaran());
+        labelSaldo1.setText("Total Jumlah Pemasukan : Rp. " + getJumlahPemasukan());
+        labelSaldo2.setText("Total Jumlah Total : Rp. " + getJumlahTotal());
+    }
+
+    private String getJumlahPengeluaran() {
+        String value = null;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream("datapengeluaran.ini"));
+            value = properties.getProperty("pengeluaran");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    private String getJumlahPemasukan() {
+        String value = null;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream("datapemasukan.ini"));
+            value = properties.getProperty("pemasukan");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    private String getJumlahTotal() {
+        String value = null;
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream("datatotal.ini"));
+            value = properties.getProperty("jumlahtotal");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return value;
     }
 
     /**
@@ -71,7 +106,7 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 18)); // NOI18N
         jLabel1.setText("Tabel Data");
 
         data_pengeluaran_table.setToolTipText("");
@@ -82,111 +117,97 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(data_pengeluaran_table);
 
-        labelSaldo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelSaldo.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 12)); // NOI18N
         labelSaldo.setText("Total Jumlah Pengeluaran : ");
 
-        labelSaldo1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelSaldo1.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 12)); // NOI18N
         labelSaldo1.setText("Total Jumlah Pemasukan :");
 
-        labelSaldo2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelSaldo2.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 12)); // NOI18N
         labelSaldo2.setText("Total Jumlah Seluruhnya : ");
 
         jButton1.setText("Back");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
-        kategori_combo_box.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kategori_combo_boxActionPerformed(evt);
-            }
-        });
+        kategori_combo_box.addActionListener(this::kategori_combo_boxActionPerformed);
 
-        jenis_data_label1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jenis_data_label1.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 11)); // NOI18N
         jenis_data_label1.setText("Edit Data");
 
         button_edit_data.setText("Edit Data");
-        button_edit_data.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_edit_dataActionPerformed(evt);
-            }
-        });
+        button_edit_data.addActionListener(this::button_edit_dataActionPerformed);
 
         button_delete_data.setText("Delete Data");
-        button_delete_data.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_delete_dataActionPerformed(evt);
-            }
-        });
+        button_delete_data.addActionListener(this::button_delete_dataActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelSaldo1)
-                            .addComponent(labelSaldo2)
-                            .addComponent(labelSaldo)
-                            .addComponent(jButton1)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(251, 251, 251)
-                        .addComponent(jLabel1)))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addComponent(text_field_edit_data, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(button_edit_data)
-                        .addGap(18, 18, 18)
-                        .addComponent(button_delete_data))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(79, 79, 79)
-                        .addComponent(jenis_data_label1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(kategori_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(227, 227, 227))))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(22, 22, 22)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(labelSaldo1)
+                                                        .addComponent(labelSaldo2)
+                                                        .addComponent(labelSaldo)
+                                                        .addComponent(jButton1)))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(251, 251, 251)
+                                                .addComponent(jLabel1)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(50, 50, 50)
+                                                .addComponent(text_field_edit_data, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(20, 20, 20)
+                                                .addComponent(button_edit_data)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(button_delete_data)
+                                        )
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(79, 79, 79)
+                                                .addComponent(jenis_data_label1)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(34, 34, 34))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(kategori_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(227, 227, 227))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(jLabel1)
-                .addGap(29, 29, 29)
-                .addComponent(kategori_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jenis_data_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(51, 51, 51)
-                        .addComponent(text_field_edit_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(48, 48, 48)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(button_edit_data)
-                            .addComponent(button_delete_data)))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13)
-                .addComponent(labelSaldo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelSaldo1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelSaldo2)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(23, 23, 23)
+                                .addComponent(jLabel1)
+                                .addGap(29, 29, 29)
+                                .addComponent(kategori_combo_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jenis_data_label1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(51, 51, 51)
+                                                .addComponent(text_field_edit_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(48, 48, 48)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(button_edit_data)
+                                                        .addComponent(button_delete_data)
+                                                ))
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(13, 13, 13)
+                                .addComponent(labelSaldo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(labelSaldo1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(labelSaldo2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton1)
+                                .addContainerGap())
         );
 
         pack();
@@ -232,22 +253,9 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
                         row.addColumn("Pengeluaran");
                     }
                     databases.child(tabelModels.get(selectedRow).getUid()).child("data_pengeluaran").setValue(String.valueOf(jumlahs));
-                    if (!tabelModels.isEmpty()) {
-                        tabelModels.clear();
-                        for (DataSnapshot dataSnapshot : ds.getChildren()) {
-                            TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
-                            tabelModels.add(tabelModel);
-                        }
-                        for (int position = 0; position < tabelModels.size(); position++) {
-                            row.fireTableDataChanged();
-                            System.out.println(tabelModels.get(position).getData_pengeluaran());
-                            tableRow[0] = tabelModels.get(position).getPengeluaran_date();
-                            tableRow[1] = tabelModels.get(position).getData_pengeluaran();
-                            row.addRow(tableRow);
-                        }
-                    } else {
-                        getDataFromFirebase(selectedCategory);
-                    }
+
+                    getDataFromFirebase(selectedCategory);
+
 
                 }
 
@@ -280,32 +288,7 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
                         row.addColumn("Pengeluaran");
                     }
                     databasez.child(tabelModels.get(selectedRow).getUid() + "/").removeValue();
-                    if (!tabelModels.isEmpty()) {
-                        tabelModels.clear();
-                        for (DataSnapshot dataSnapshot : ds.getChildren()) {
-                            TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
-                            tabelModels.add(tabelModel);
-                        }
-                        for (int position = 0; position < tabelModels.size(); position++) {
-                            row.fireTableDataChanged();
-                            System.out.println(tabelModels.get(position).getData_pengeluaran());
-                            tableRow[0] = tabelModels.get(position).getPengeluaran_date();
-                            tableRow[1] = tabelModels.get(position).getData_pengeluaran();
-                            row.addRow(tableRow);
-                        }
-                    } else {
-                        for (DataSnapshot dataSnapshot : ds.getChildren()) {
-                            TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
-                            tabelModels.add(tabelModel);
-                        }
-                        for (int position = 0; position < tabelModels.size(); position++) {
-                            row.fireTableDataChanged();
-                            System.out.println(tabelModels.get(position).getData_pengeluaran());
-                            tableRow[0] = tabelModels.get(position).getPengeluaran_date();
-                            tableRow[1] = tabelModels.get(position).getData_pengeluaran();
-                            row.addRow(tableRow);
-                        }
-                    }
+                    getDataFromFirebase(selectedCategory);
 
                 }
 
@@ -316,6 +299,7 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
             });
         }
     }//GEN-LAST:event_button_delete_dataActionPerformed
+
     private void getDataFromFirebase(String selectedCategory) {
         DatabaseReference databasesz = FirebaseDatabase.getInstance().getReference("data_tugas" + "/" + selectedCategory);
         databasesz.addValueEventListener(new ValueEventListener() {
@@ -336,23 +320,24 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
                         TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
                         tabelModels.add(tabelModel);
                     }
-                    for (int position = 0; position < tabelModels.size(); position++) {
+                    for (TabelModel tabelModel : tabelModels) {
                         row.fireTableDataChanged();
-                        System.out.println(tabelModels.get(position).getData_pengeluaran());
-                        tableRow[0] = tabelModels.get(position).getPengeluaran_date();
-                        tableRow[1] = tabelModels.get(position).getData_pengeluaran();
+                        System.out.println(tabelModel.getData_pengeluaran());
+                        tableRow[0] = tabelModel.getPengeluaran_date();
+                        tableRow[1] = tabelModel.getData_pengeluaran();
                         row.addRow(tableRow);
                     }
                 } else {
+                    tabelModels.clear();
                     for (DataSnapshot dataSnapshot : ds.getChildren()) {
                         TabelModel tabelModel = dataSnapshot.getValue(TabelModel.class);
                         tabelModels.add(tabelModel);
                     }
-                    for (int position = 0; position < tabelModels.size(); position++) {
+                    for (TabelModel tabelModel : tabelModels) {
                         row.fireTableDataChanged();
-                        System.out.println(tabelModels.get(position).getData_pengeluaran());
-                        tableRow[0] = tabelModels.get(position).getPengeluaran_date();
-                        tableRow[1] = tabelModels.get(position).getData_pengeluaran();
+                        System.out.println(tabelModel.getData_pengeluaran());
+                        tableRow[0] = tabelModel.getPengeluaran_date();
+                        tableRow[1] = tabelModel.getData_pengeluaran();
                         row.addRow(tableRow);
                     }
                 }
@@ -382,21 +367,13 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TabelPengeluaranFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TabelPengeluaranFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TabelPengeluaranFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(TabelPengeluaranFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new TabelPengeluaranFrame().setVisible(true);
-        });
+        java.awt.EventQueue.invokeLater(() -> new TabelPengeluaranFrame().setVisible(true));
         // Initialize Firebase
         try {
             // [START initialize]
@@ -406,7 +383,6 @@ public class TabelPengeluaranFrame extends javax.swing.JFrame {
                     .setDatabaseUrl(DATABASE_URL)
                     .build();
             FirebaseApp.initializeApp(options);
-            database = FirebaseDatabase.getInstance().getReference(DATABASE_URL);
             // [END initialize]
         } catch (IOException e) {
             System.out.println("ERROR: invalid service account credentials. See README.");
